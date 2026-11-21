@@ -46,6 +46,49 @@
         }
     </script>
 </head>
+
+<!-- ▼ ここからコピー ▼ -->
+<script>
+  (function() {
+    // 1. ここに好きな合言葉（鍵）を設定してください
+    const SECRET_KEY = "aiharuka"; 
+
+    // 2. あなたのnote記事のURL（鍵なしでアクセスされた時の案内先）
+    const NOTE_URL = "https://note.com"; 
+
+    const STORAGE_KEY = "app_unlocked_status";
+    const urlParams = new URLSearchParams(window.location.search);
+    const keyParam = urlParams.get("key");
+
+    // URLに正しい鍵がついているかチェック
+    if (keyParam === SECRET_KEY) {
+      // 正しければブラウザに「認証済み」を記憶させる
+      localStorage.setItem(STORAGE_KEY, SECRET_KEY);
+      // URLの末尾の「?key=...」を消してスッキリさせる（スクショ対策）
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // ブラウザに正しい鍵が記憶されているかチェック
+    const savedKey = localStorage.getItem(STORAGE_KEY);
+    if (savedKey !== SECRET_KEY) {
+      // 鍵がない場合は画面を書き換えてブロックする
+      document.addEventListener("DOMContentLoaded", function() {
+        document.body.innerHTML = `
+          <div style="text-align: center; padding: 50px 20px; font-family: sans-serif; line-height: 1.6;">
+            <h2>🔒 このアプリはnote購入者専用です</h2>
+            <p>noteの有料記事内に記載されている専用リンクからアクセスしてください。</p>
+            <a href="${NOTE_URL}" style="display: inline-block; margin-top: 20px; padding: 12px 24px; background: #2cb696; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              noteの記事ページへ戻る
+            </a>
+          </div>
+        `;
+      });
+    }
+  })();
+</script>
+<!-- ▲ ここまでコピー ▲ -->
+
+
 <body id="appBody" class="bg-gradient-to-b from-pink-50 via-purple-50 to-amber-50 text-gray-800 font-sans min-h-screen flex flex-col items-center justify-start py-6 px-4 transition-colors duration-500">
 
     <!-- メインコンテナ -->
@@ -900,6 +943,36 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
         });
+
+// 鍵が正しい時だけ script.js を読み込む
+  if (localStorage.getItem("app_unlocked_status") === "aiharuka") { // ←ここも設定した鍵と同じにする
+    const s = document.createElement("script");
+    s.src = "script.js";
+    document.body.appendChild(s);
+  }
+
+
     </script>
 </body>
+<!-- ▼ クレジット表記（画面最下部に固定） ▼ -->
+<div style="
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #ffeb3b;
+  background: rgba(15, 23, 42, 0.92);
+  padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+  z-index: 99999;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  box-sizing: border-box;
+  pointer-events: none;
+">
+  © 2026  AI専属占い師ハルカ / note購入者専用アプリ
+</div>
+
+
 </html>
