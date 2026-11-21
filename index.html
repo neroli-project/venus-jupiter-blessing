@@ -46,7 +46,6 @@
         }
     </script>
 </head>
-
 <!-- ▼ ここからコピー ▼ -->
 <script>
   (function() {
@@ -150,7 +149,7 @@
                         生年月日を選択してください <span class="text-rose-500">*</span>
                     </label>
                     <input type="date" id="birthDate" required
-                        class="w-full px-4 py-3.5 rounded-2xl border-2 border-pink-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none text-gray-700 font-bold text-center text-lg bg-white transition">
+                        class="block w-full min-w-0 max-w-full box-border appearance-none px-4 py-3.5 rounded-2xl border-2 border-pink-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none text-gray-700 font-bold text-center text-base sm:text-lg bg-white transition">
                 </div>
 
                 <div>
@@ -158,7 +157,7 @@
                         出生時間（任意・わかればより精密に！）
                     </label>
                     <input type="time" id="birthTime" value="12:00"
-                        class="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-rose-400 outline-none text-gray-600 text-center bg-white transition">
+                        class="block w-full min-w-0 max-w-full box-border appearance-none px-4 py-3 rounded-2xl border border-pink-200 focus:border-rose-400 outline-none text-gray-600 text-center text-base bg-white transition">
                     <p class="text-[11px] text-gray-400 mt-1 text-center">※不明な場合は初期値（12:00）のままで大丈夫です</p>
                 </div>
 
@@ -944,12 +943,13 @@
             });
         });
 
-// 鍵が正しい時だけ script.js を読み込む
+ // 鍵が正しい時だけ script.js を読み込む
   if (localStorage.getItem("app_unlocked_status") === "aiharuka") { // ←ここも設定した鍵と同じにする
     const s = document.createElement("script");
     s.src = "script.js";
     document.body.appendChild(s);
   }
+
 
 
     </script>
@@ -973,6 +973,8 @@
 ">
   © 2026  AI専属占い師ハルカ / note購入者専用アプリ
 </div>
+
+
 
 
 </html>
