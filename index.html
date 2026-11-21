@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>あなたの「愛され女神・男神タイプ」＆恋の拡大ポイント診断</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Astronomy Engine (天文計算ライブラリ) -->
+    <script src="https://cdn.jsdelivr.net/npm/astronomy-engine@2.1.19/astronomy.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Zen Maru Gothic"', 'sans-serif'],
+                        serif: ['"Shippori Mincho"', 'serif'],
+                    },
+                    colors: {
+                        roseGold: '#d48c95',
+                        deepPlum: '#4a2545',
+                        softCream: '#fffaf9',
+                        lineGreen: '#06C755',
+                    },
+                    animation: {
+                        'float': 'float 3s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(15px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body id="appBody" class="bg-gradient-to-b from-pink-50 via-purple-50 to-amber-50 text-gray-800 font-sans min-h-screen flex flex-col items-center justify-start py-6 px-4 transition-colors duration-500">
+
+    <!-- メインコンテナ -->
+    <main class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-3xl shadow-xl border border-pink-100 overflow-hidden">
+        
+        <!-- ヘッダー装飾 -->
+        <div id="appHeader" class="bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 p-6 text-center text-white relative overflow-hidden transition-all duration-500">
+            <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none flex justify-between items-center px-4 text-4xl">
+                <span>✨</span><span>🌙</span><span>💫</span>
+            </div>
+            <span class="inline-block bg-white/25 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full mb-2 tracking-wider">
+                LINE登録者様 限定プレミアム診断
+            </span>
+            <h1 id="appMainTitle" class="font-serif text-2xl font-bold leading-snug drop-shadow-sm">
+                あなたの「愛され女神タイプ」<br>＆ 恋の拡大ポイント診断
+            </h1>
+            <p class="text-xs mt-2 text-white/90">
+                星の配置から、あなたの魅力と運命の相手を精密に紐解きます
+            </p>
+        </div>
+
+        <!-- 入力フォームエリア -->
+        <section id="inputSection" class="p-6 transition-all duration-500">
+            <div id="introBox" class="bg-pink-50/70 rounded-2xl p-4 mb-6 border border-pink-100 text-sm text-gray-700 leading-relaxed transition-colors duration-500">
+                <p id="introTitle" class="font-bold text-rose-600 mb-1">🔮 この診断でわかる3つのこと</p>
+                <ul class="list-disc list-inside space-y-1 text-xs">
+                    <li><b>金星星座：</b>あなたの「愛され<span id="introRoleText">女神</span>タイプ」</li>
+                    <li><b>木星星座：</b>恋が劇的にうまくいく「心の持ち方」</li>
+                    <li><b>火星星座：</b>あなたが惹かれる「お相手の面白トリセツ」</li>
+                </ul>
+            </div>
+
+            <form id="fortuneForm" class="space-y-5">
+                <!-- 性別選択ボタン（ラジオボタンをカード風にデザイン） -->
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">
+                        診断タイプを選択してください <span class="text-rose-500">*</span>
+                    </label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="gender" value="female" checked class="peer sr-only">
+                            <div class="p-3 rounded-2xl border-2 border-pink-200 bg-white text-center peer-checked:border-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700 transition shadow-xs">
+                                <span class="text-2xl block mb-1">👸</span>
+                                <span class="font-bold text-sm block">女性（女神診断）</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="gender" value="male" class="peer sr-only">
+                            <div class="p-3 rounded-2xl border-2 border-gray-200 bg-white text-center peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 transition shadow-xs">
+                                <span class="text-2xl block mb-1">🤴</span>
+                                <span class="font-bold text-sm block">男性（男神診断）</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="birthDate" class="block text-sm font-bold text-gray-700 mb-2">
+                        生年月日を選択してください <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="date" id="birthDate" required
+                        class="w-full px-4 py-3.5 rounded-2xl border-2 border-pink-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 outline-none text-gray-700 font-bold text-center text-lg bg-white transition">
+                </div>
+
+                <div>
+                    <label for="birthTime" class="block text-sm font-bold text-gray-700 mb-1">
+                        出生時間（任意・わかればより精密に！）
+                    </label>
+                    <input type="time" id="birthTime" value="12:00"
+                        class="w-full px-4 py-3 rounded-2xl border border-pink-200 focus:border-rose-400 outline-none text-gray-600 text-center bg-white transition">
+                    <p class="text-[11px] text-gray-400 mt-1 text-center">※不明な場合は初期値（12:00）のままで大丈夫です</p>
+                </div>
+
+                <button id="submitBtn" type="submit"
+                    class="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-500 hover:from-rose-600 hover:to-purple-600 text-white font-bold text-lg shadow-lg shadow-rose-200 transform active:scale-95 transition flex items-center justify-center gap-2">
+                    <span>✨</span> <span id="submitBtnText">女神タイプを診断する</span> <span>✨</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- ローディング表示 -->
+        <section id="loadingSection" class="hidden p-12 text-center">
+            <div class="text-5xl animate-bounce mb-4">🔭</div>
+            <p id="loadingText" class="font-serif text-lg font-bold text-rose-600 animate-pulse">
+                あなたの生まれた瞬間の<br>星の配置を計算しています...
+            </p>
+            <p class="text-xs text-gray-400 mt-2">金星・木星・火星の軌道をスキャン中</p>
+        </section>
+
+        <!-- 診断結果エリア -->
+        <section id="resultSection" class="hidden p-5 space-y-6 animate-fade-in">
+            
+            <!-- 1. スクショ推奨！愛され女神・男神カード（金星） -->
+            <div id="shareCard" class="relative bg-gradient-to-br from-rose-50 via-white to-purple-50 rounded-3xl p-6 border-2 border-rose-200 shadow-md text-center overflow-hidden">
+                <div id="screenshotBadge" class="absolute top-2 right-3 text-[10px] font-bold text-rose-400 bg-rose-100/80 px-2.5 py-0.5 rounded-full">
+                    📸 スクショしてシェア！
+                </div>
+                
+                <p id="venusSignWrapper" class="text-xs font-bold text-purple-600 mt-2">
+                    あなたの金星星座：<span id="venusSignName" class="underline"></span>
+                </p>
+                <p id="venusSubLabel" class="text-xs text-gray-500 mt-1">あなたの愛され女神タイプは…</p>
+                
+                <!-- 神アイコン -->
+                <div id="venusEmoji" class="text-6xl my-3 animate-float">👑</div>
+                
+                <!-- キャッチーなタイプ名 -->
+                <h2 id="venusTitle" class="font-serif text-2xl font-bold text-rose-600 leading-tight mb-2">
+                    情熱のヒロイン女神タイプ
+                </h2>
+                
+                <!-- ハッシュタグ風の短いキャッチコピー -->
+                <div id="venusTag" class="inline-block bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4">
+                    #追われるより追いたい恋のハンター
+                </div>
+
+                <!-- 解説文 -->
+                <p id="venusDesc" class="text-sm text-gray-700 leading-relaxed text-left bg-white/80 p-4 rounded-2xl border border-pink-100">
+                    解説文がここに入ります。
+                </p>
+            </div>
+
+            <!-- シェア＆コピー用ボタン -->
+            <div class="flex gap-2">
+                <button id="copyResultBtn" type="button"
+                    class="flex-1 py-2.5 px-3 rounded-xl bg-pink-100 hover:bg-pink-200 text-rose-700 font-bold text-xs transition flex items-center justify-center gap-1">
+                    📋 結果をコピーして友達に送る
+                </button>
+            </div>
+            <div id="copyToast" class="hidden text-center text-xs font-bold text-rose-600 bg-rose-50 py-1.5 rounded-lg">
+                ✨ 診断結果をクリップボードにコピーしました！
+            </div>
+
+            <!-- 2. 恋がうまくいく心の持ち方（木星） -->
+            <div class="bg-amber-50/80 rounded-3xl p-5 border border-amber-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-2xl">🍀</span>
+                    <div>
+                        <span class="text-[11px] font-bold text-amber-600 block">
+                            木星星座（<span id="jupiterSignName"></span>）からの開運メッセージ
+                        </span>
+                        <h3 class="font-serif text-lg font-bold text-amber-900">
+                            恋の拡大ポイント＆心の持ち方
+                        </h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-4 border border-amber-100 mt-3">
+                    <p id="jupiterCatch" class="font-bold text-amber-700 text-sm mb-2">
+                        「〇〇〇」と唱えるだけで愛され度急上昇！
+                    </p>
+                    <p id="jupiterDesc" class="text-sm text-gray-700 leading-relaxed">
+                        木星のアドバイスがここに入ります。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 3. お付き合いする相手の面白タイプ（火星） -->
+            <div class="bg-indigo-50/80 rounded-3xl p-5 border border-indigo-200 shadow-sm">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-2xl">💘</span>
+                    <div>
+                        <span class="text-[11px] font-bold text-indigo-600 block">
+                            火星星座（<span id="marsSignName"></span>）が引き寄せる！
+                        </span>
+                        <h3 class="font-serif text-lg font-bold text-indigo-950">
+                            あなたが惹かれる「お相手の面白タイプ」
+                        </h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl p-4 border border-indigo-100 mt-3">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span id="marsEmoji" class="text-2xl">🦁</span>
+                        <p id="marsTitle" class="font-bold text-indigo-700 text-base">
+                            俺についてこい！少年ジャンプ系男子
+                        </p>
+                    </div>
+                    <p id="marsDesc" class="text-sm text-gray-700 leading-relaxed">
+                        火星の解説がここに入ります。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 4. LINE鑑定への自然な導線エリア -->
+            <div class="bg-gradient-to-b from-purple-900 to-deepPlum text-white rounded-3xl p-6 text-center shadow-lg space-y-4">
+                <div class="inline-block bg-amber-400 text-purple-950 text-xs font-bold px-3 py-1 rounded-full">
+                    ✨ もっと深く知りたいあなたへ ✨
+                </div>
+                <h3 class="font-serif text-xl font-bold leading-snug">
+                    気になる「あの人」との<br>相性や恋の行方は？
+                </h3>
+                <p class="text-xs text-purple-100 leading-relaxed">
+                    今回の診断は、あなたの星のほんの一部です。<br>
+                    「お相手と結ばれるタイミングは？」「今の恋の障害を乗り越える方法は？」など、お二人の星を重ね合わせる<b>個別プレミアム鑑定</b>をLINEにて受付中です。
+                </p>
+
+                <!-- 個別鑑定案内リンク（LINEトークへ誘導） -->
+                <div class="pt-2 space-y-3">
+                    <a id="lineConsultBtn" href="https://line.me/R/" target="_blank" rel="noopener noreferrer"
+                        class="block w-full py-4 px-4 rounded-2xl bg-lineGreen hover:bg-green-500 text-white font-bold text-base shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/></svg>
+                        LINEで個別鑑定の案内を見る
+                    </a>
+                    
+                    <a id="lineBackBtn" href="https://line.me/R/"
+                        class="block w-full py-3 px-4 rounded-2xl bg-white/15 hover:bg-white/25 text-white font-bold text-xs transition">
+                        ← LINEのトーク画面へ戻る
+                    </a>
+                </div>
+                <p class="text-[10px] text-purple-200">
+                    ※トーク画面で診断結果のスクショを送っていただくとスムーズです♪
+                </p>
+            </div>
+
+            <!-- もう一度診断するボタン -->
+            <div class="text-center pt-2 pb-4">
+                <button id="retryBtn" type="button"
+                    class="text-xs text-gray-500 underline hover:text-rose-500 transition">
+                    別の生年月日で診断する（お友達や気になる人）
+                </button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- エラーメッセージ用モーダル（alertの代わり） -->
+    <div id="errorModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 max-w-xs w-full text-center shadow-xl">
+            <div class="text-3xl mb-2">⚠️</div>
+            <p id="errorMessage" class="text-sm font-bold text-gray-700 mb-4">生年月日を入力してください。</p>
+            <button id="closeModalBtn" class="w-full py-2.5 rounded-xl bg-rose-500 text-white font-bold text-sm">
+                閉じる
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. 12星座マスターデータ（女性：女神 / 男性：男神）
+        // ==========================================
+        const ZODIAC_DATA = [
+            {
+                sign: "牡羊座",
+                venus: {
+                    female: {
+                        emoji: "🔥",
+                        title: "情熱のヒロイン女神タイプ",
+                        tag: "#好きになったら一直線！恋のハンター",
+                        desc: "あなたの魅力は、裏表のないピュアな情熱と無邪気な笑顔！駆け引きなんて不要、素直に「好き！」と表現する姿に男性はイチコロです。恋の主導権を握ることで輝きが増す、ドラマの主人公のような愛され女神です。"
+                    },
+                    male: {
+                        emoji: "⚔️",
+                        title: "情熱のヒーロー男神タイプ",
+                        tag: "#好きになったら一直線！真っ直ぐな太陽系男子",
+                        desc: "あなたの魅力は、裏表のないピュアな情熱と頼もしい行動力！駆け引きなんて不要、素直に「好き！」とアプローチする真っ直ぐさに女性はドキッとします。恋の主導権を握って引っ張ることで輝きが増す愛され男神です。"
+                    }
+                },
+                jupiter: {
+                    catch: "「迷ったらGO！直感で動く自分、最高！」",
+                    desc: "恋を拡大させる鍵は『スピード感と素直さ』。あれこれ悩んでブレーキをかけるより、気になったら自分から連絡する・誘うことで幸運の歯車が勢いよく回り始めます！"
+                },
+                mars: {
+                    female: {
+                        emoji: "🦁",
+                        title: "俺についてこい！少年ジャンプ系男子",
+                        desc: "裏表がなく、ちょっと不器用でも真っ直ぐに愛情をぶつけてくれる熱血タイプに惹かれがち。少し子どもっぽいところもありますが、あなたが一番の味方になってあげると最高のヒーローに進化します！"
+                    },
+                    male: {
+                        emoji: "🌻",
+                        title: "天真爛漫！笑顔が眩しいヒロイン系女子",
+                        desc: "裏表がなく、嬉しい時は全力で喜んでくれるピュアで明るい女性に惹かれがち。少し気の強いところもありますが、あなたが一番の理解者になってあげると最高のパートナーになります！"
+                    }
+                }
+            },
+            {
+                sign: "牡牛座",
+                venus: {
+                    female: {
+                        emoji: "🌷",
+                        title: "五感を満たす癒やしの聖母タイプ",
+                        tag: "#一緒にいるだけでマイナスイオン全開",
+                        desc: "おっとりとした空気感と、美味しいものや心地よい空間を大切にする豊かな感性の持ち主。あなたが隣でニコニコしているだけで、男性は「この子を手放したくない！」と本能で感じてしまう天性の愛され体質です。"
+                    },
+                    male: {
+                        emoji: "🌿",
+                        title: "圧倒的安心感の癒やし男神タイプ",
+                        tag: "#一緒にいるだけで心がほどける大人の余裕",
+                        desc: "おっとりとした穏やかな空気感と、美味しいものや心地よい空間を大切にする豊かな感性の持ち主。あなたが隣で優しく微笑んでいるだけで、女性は「ずっと一緒にいたい！」と本能で感じてしまう天性の愛され男神です。"
+                    }
+                },
+                jupiter: {
+                    catch: "「焦らなくて大丈夫。じっくり愛される価値がある」",
+                    desc: "恋の拡大ポイントは『自分の心地よさを最優先すること』。お気に入りのカフェに行ったり、肌触りの良い服を着たりして自分を甘やかすほど、不思議と素敵な愛が引き寄せられます。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🐻",
+                        title: "ドッシリ構えるグルメな安心感男子",
+                        desc: "チャラチャラした人よりも、誠実で経済観念がしっかりした「安定感バツグン男子」とご縁あり！美味しいご飯を一緒に食べて「幸せだね」と笑い合える、穏やかで温かな関係を築けます。"
+                    },
+                    male: {
+                        emoji: "🍰",
+                        title: "おっとり癒やし系！グルメな和み女子",
+                        desc: "派手さよりも、家庭的で穏やかな空気を持つ「安心感バツグン女子」とご縁あり！美味しいご飯を一緒に食べて「幸せだね」と笑い合える、温かく居心地の良い関係を築けます。"
+                    }
+                }
+            },
+            {
+                sign: "双子座",
+                venus: {
+                    female: {
+                        emoji: "🦋",
+                        title: "恋の駆け引き上手な小悪魔妖精タイプ",
+                        tag: "#おしゃべり上手な永遠のガールフレンド",
+                        desc: "軽やかなトークと好奇心旺盛なキラキラした瞳が武器！一緒にいて飽きない「最高の話し相手」としてモテまくるタイプです。重くならずサラッと愛情を伝えるセンスは12星座ナンバーワン！"
+                    },
+                    male: {
+                        emoji: "🌬️",
+                        title: "会話の魔術師！爽やかトリックスター男神",
+                        tag: "#一緒にいて絶対に飽きない最高の相棒",
+                        desc: "軽快なトークと好奇心旺盛な少年のような瞳が武器！一緒にいて笑顔が絶えない「最高の話し相手」としてモテまくるタイプです。重くならずスマートに愛情を伝えるセンスは12星座ナンバーワン！"
+                    }
+                },
+                jupiter: {
+                    catch: "「深刻にならない！恋は楽しくおしゃべりするゲーム♪」",
+                    desc: "恋がうまくいく心の持ち方は『風通しの良さ』。1つの恋に執着しすぎず、趣味や友達との時間も思いっきり楽しむことで、結果的に本命のお相手から追いかけられます。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🦊",
+                        title: "頭の回転が速い！ツッコミ上手なスマート男子",
+                        desc: "LINEの返信が面白かったり、知識が豊富で話していて刺激をくれる知性派男子にキュンとしがち。少し気まぐれな一面もありますが、お互いの自由を尊重できる親友のようなカップルになれます！"
+                    },
+                    male: {
+                        emoji: "🐿️",
+                        title: "ノリが最高！おしゃべり上手な小悪魔女子",
+                        desc: "LINEの返信が面白かったり、好奇心旺盛で話していて刺激をくれる会話上手な女子にキュンとしがち。少し気まぐれな一面もありますが、お互いの自由を尊重できる親友のようなカップルになれます！"
+                    }
+                }
+            },
+            {
+                sign: "蟹座",
+                venus: {
+                    female: {
+                        emoji: "🌙",
+                        title: "深い愛情で包み込む月の女神タイプ",
+                        tag: "#一度愛したらとことん尽くす家庭的プリンセス",
+                        desc: "相手の気持ちを察する優しさと、守ってあげたくなる可愛らしさを兼ね備えた愛され女神。心を許した相手にはとびきりの愛情を注ぐため、男性の「結婚したい欲」を強烈に刺激します！"
+                    },
+                    male: {
+                        emoji: "🌊",
+                        title: "深い優しさで包み込む守護神タイプ",
+                        tag: "#一度愛したら全力で守り抜く家庭的ナイト",
+                        desc: "相手の気持ちを察する繊細な優しさと、包容力を兼ね備えた愛され男神。心を許した相手にはとびきりの愛情を注ぐため、女性の「この人と結婚したい！」という本能を強烈に刺激します！"
+                    }
+                },
+                jupiter: {
+                    catch: "「自分の優しさは、大切にしてくれる人のために使う！」",
+                    desc: "恋の拡大ポイントは『安心できる居場所づくり』。不安になった時は我慢せず「ちょっと甘えたいな」と素直に頼ることで、お相手の愛情に火がつき、溺愛ルートへ突入します。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🐶",
+                        title: "実は甘えん坊！身内思いの忠犬ハチ公男子",
+                        desc: "外ではしっかり者に見えて、二人きりになると急に甘えてくるギャップ男子と縁が深いです。あなたのことを「家族のように大切な存在」として全力で守ってくれる温かいパートナーになります。"
+                    },
+                    male: {
+                        emoji: "🐰",
+                        title: "守ってあげたい！情に厚い家庭的女子",
+                        desc: "外では気丈に振る舞っていても、二人きりになると急に甘えてくるギャップ女子と縁が深いです。あなたのことを「一番の味方」として全力で支えてくれる温かいパートナーになります。"
+                    }
+                }
+            },
+            {
+                sign: "獅子座",
+                venus: {
+                    female: {
+                        emoji: "👑",
+                        title: "華やかなオーラ全開のクイーン女神タイプ",
+                        tag: "#存在そのものがエンターテインメント！",
+                        desc: "そこにいるだけでパッと場が明るくなる、太陽のような華やかさの持ち主！ドラマチックな恋愛が似合い、堂々と自信を持って振る舞うほど、あなたを「お姫様扱い」してくれる素敵な男性が集まってきます。"
+                    },
+                    male: {
+                        emoji: "🦁",
+                        title: "圧倒的カリスマ！太陽のキング男神タイプ",
+                        tag: "#存在そのものがエンターテインメント！",
+                        desc: "そこにいるだけでパッと場が明るくなる、太陽のような華やかさと男気の持ち主！ドラマチックな恋愛が似合い、堂々と自信を持って振る舞うほど、あなたを尊敬し慕う素敵な女性が集まってきます。"
+                    }
+                },
+                jupiter: {
+                    catch: "「自分が笑えば世界が輝く！愛されて当たり前♪」",
+                    desc: "恋がうまくいく心の持ち方は『遠慮しないこと』。謙遜して一歩引くよりも、「嬉しい！ありがとう！」と全身で喜びを表現することで、お相手は「もっと喜ばせたい！」と燃え上がります。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🦚",
+                        title: "褒めて伸びる！プライド高めな王子様男子",
+                        desc: "ちょっと見栄っ張りだけど、好きな女性の前ではカッコつけたいロマンチスト男子に惹かれがち。「すごい！さすが！」と上手におだててあげると、驚くほどあなたに尽くしてくれる最高の彼氏になります！"
+                    },
+                    male: {
+                        emoji: "🌹",
+                        title: "華やかでドラマチック！お姫様気質のヒロイン女子",
+                        desc: "ちょっとプライドが高いけれど、好きな男性の前では最高に可愛くあろうとする努力家女子に惹かれがち。レディーファーストで特別扱いしてあげると、驚くほどあなたに尽くしてくれる最高の彼女になります！"
+                    }
+                }
+            },
+            {
+                sign: "乙女座",
+                venus: {
+                    female: {
+                        emoji: "🌿",
+                        title: "清楚で可憐なパーフェクト・ミューズタイプ",
+                        tag: "#細やかな気配りに男性が密かにノックアウト",
+                        desc: "清潔感あふれる佇まいと、さりげない気配りができる知的な愛され女神。あなたが何気なく見せる優しさや真面目さに、誠実な男性ほど「この子こそ本命だ！」と強く惹かれます。"
+                    },
+                    male: {
+                        emoji: "🍃",
+                        title: "誠実でスマートなパーフェクト紳士男神タイプ",
+                        tag: "#細やかな気配りに女性が密かにノックアウト",
+                        desc: "清潔感あふれる佇まいと、さりげない気配りができる知的な愛され男神。あなたが何気なく見せる優しさや誠実さに、見る目のある女性ほど「この人こそ本命だ！」と強く惹かれます。"
+                    }
+                },
+                jupiter: {
+                    catch: "「完璧じゃなくていい。抜けてるところも愛嬌のうち！」",
+                    desc: "恋の拡大ポイントは『自分へのダメ出しをやめること』。つい相手の反応を分析しすぎたら深呼吸！少しスキを見せて「助けて〜」と頼るだけで、愛され度が爆発的にアップします。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🦉",
+                        title: "真面目で几帳面！ツンデレ気味の執事系男子",
+                        desc: "口数は多くなくても、約束をきちんと守ったり体調を気遣ってくれたりと「行動で愛を示す」誠実男子と相性バッチリ！少し理屈っぽいところも、あなたへの真剣さの裏返しです。"
+                    },
+                    male: {
+                        emoji: "🐈‍⬛",
+                        title: "清楚でしっかり者！ツンデレ気味の優等生女子",
+                        desc: "派手なアピールはなくても、細かいところに気づいてフォローしてくれる誠実女子と相性バッチリ！少し控えめなところも、あなたを大切に思う真剣さの裏返しです。"
+                    }
+                }
+            },
+            {
+                sign: "天秤座",
+                venus: {
+                    female: {
+                        emoji: "🦢",
+                        title: "洗練された社交界のヴィーナスタイプ",
+                        tag: "#全方位から愛されるセンス抜群のモテ女神",
+                        desc: "抜群のバランス感覚と洗練されたファッションセンスを持つ、まさに「愛と美の女神ヴィーナス」そのもの！誰に対してもスマートで上品な笑顔を向けられるため、自然と周囲から一目置かれる存在です。"
+                    },
+                    male: {
+                        emoji: "⚖️",
+                        title: "洗練された社交界のプリンス男神タイプ",
+                        tag: "#全方位から愛されるセンス抜群のモテ男神",
+                        desc: "抜群のバランス感覚と洗練されたセンスを持つ、まさに「スマートなプリンス」そのもの！誰に対しても爽やかで上品な笑顔を向けられるため、自然と周囲から一目置かれる存在です。"
+                    }
+                },
+                jupiter: {
+                    catch: "「対等なパートナーとして、心地よい距離感で愛を育む♪」",
+                    desc: "恋がうまくいく心の持ち方は『自分を美しく磨くこと』。お気に入りのファッションや身だしなみでテンションを上げると波動が一気に高まり、あなたの魅力にふさわしい素敵なお相手が引き寄せられます。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🦢",
+                        title: "エスコート上手！爽やかイケメン気質の紳士男子",
+                        desc: "TPOをわきまえたスマートな振る舞いができる、センスの良い男子に惹かれがち。重苦しい空気を嫌い、いつもオシャレなカフェやデートスポットで爽やかな恋を楽しめる相手です。"
+                    },
+                    male: {
+                        emoji: "🦋",
+                        title: "センス抜群！オシャレで社交的な美人系女子",
+                        desc: "TPOをわきまえたスマートな振る舞いができる、センスの良い女子に惹かれがち。重苦しい空気を嫌い、いつもオシャレなカフェやデートスポットで爽やかな恋を楽しめる相手です。"
+                    }
+                }
+            },
+            {
+                sign: "蠍座",
+                venus: {
+                    female: {
+                        emoji: "🌹",
+                        title: "ミステリアスな魅惑のフェロモン女神タイプ",
+                        tag: "#一度ハマったら抜け出せない底なしの魅力",
+                        desc: "多くを語らなくても視線や雰囲気で相手をドキッとさせる、圧倒的な色気と深みを持つ女神。一途に深く愛する力を持っているため、あなたの愛に触れた男性は他の女性が見えなくなります。"
+                    },
+                    male: {
+                        emoji: "🦂",
+                        title: "ミステリアスな魅惑のカリスマ男神タイプ",
+                        tag: "#一度ハマったら抜け出せない底なしの色気",
+                        desc: "多くを語らなくても視線や雰囲気で相手をドキッとさせる、圧倒的な大人の色気と深みを持つ男神。一途に深く愛する力を持っているため、あなたの愛に触れた女性は他の男性が見えなくなります。"
+                    }
+                },
+                jupiter: {
+                    catch: "「深い愛は最強のギフト。信じて委ねれば奇跡が起きる」",
+                    desc: "恋の拡大ポイントは『疑うよりも信じること』。深読みして一人で抱え込むのをやめて、「自分は愛されている」と腹を括った瞬間、運命が劇的に動き出します。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🐺",
+                        title: "一途で情熱的！秘密主義のミステリアス男子",
+                        desc: "普段はクールなのに、二人きりになると情熱的で独占欲を見せてくれる「一途なオオカミ男子」と強烈に惹かれ合います。表面的な付き合いではなく、魂レベルで深く結びつく恋ができます。"
+                    },
+                    male: {
+                        emoji: "🐈",
+                        title: "一途で情熱的！秘密主義のミステリアス女子",
+                        desc: "普段はクールなのに、二人きりになると情熱的で甘えてくる「一途な黒猫女子」と強烈に惹かれ合います。表面的な付き合いではなく、魂レベルで深く結びつく恋ができます。"
+                    }
+                }
+            },
+            {
+                sign: "射手座",
+                venus: {
+                    female: {
+                        emoji: "🏹",
+                        title: "自由奔放な冒険のアルテミス女神タイプ",
+                        tag: "#ポジティブな笑顔で恋の矢を射抜く自由人",
+                        desc: "細かいことは気にしないカラッとした明るさと、未知の世界を楽しむ冒険心が魅力！束縛を嫌い、自分の人生を思いっきり楽しむあなたの姿は、男性にとって最高に眩しく追いかけたくなる存在です。"
+                    },
+                    male: {
+                        emoji: "🔥",
+                        title: "自由奔放な冒険のゼウス男神タイプ",
+                        tag: "#ポジティブな笑顔で心を射抜くワイルド自由人",
+                        desc: "細かいことは気にしないカラッとした明るさと、未知の世界を楽しむ冒険心が魅力！束縛を嫌い、自分の人生を思いっきり楽しむあなたの姿は、女性にとって最高に眩しく憧れる存在です。"
+                    }
+                },
+                jupiter: {
+                    catch: "「なんとかなるさ！楽しんだもん勝ちの恋をする♪」",
+                    desc: "恋がうまくいく心の持ち方は『視野を広く持つこと』。いつもの行動範囲を少し飛び出して新しい場所へ出かけると、ドラマチックな出会いや恋の進展が待っています！"
+                },
+                mars: {
+                    female: {
+                        emoji: "🐎",
+                        title: "フットワーク軽すぎ！夢を追う少年冒険家男子",
+                        desc: "束縛を嫌い、いつもワクワクする夢や目標に向かって突き進むポジティブ男子に惹かれがち。少し連絡が雑な時もありますが、一緒にいると世界が広がる最高の相棒になれます！"
+                    },
+                    male: {
+                        emoji: "🐆",
+                        title: "フットワーク軽すぎ！ポジティブなアクティブ女子",
+                        desc: "ジメジメした空気を吹き飛ばす、明るくて好奇心旺盛なアクティブ女子に惹かれがち。少し自由奔放な時もありますが、一緒にいると毎日が冒険のように楽しくなる最高の相棒になれます！"
+                    }
+                }
+            },
+            {
+                sign: "山羊座",
+                venus: {
+                    female: {
+                        emoji: "💎",
+                        title: "気品あふれる大人のロイヤル女神タイプ",
+                        tag: "#誠実さと上品さで本命の座を射止める実力派",
+                        desc: "落ち着いた大人の色気と、誠実に愛を育む芯の強さを持つ女神。軽い恋ではなく「将来を見据えた真剣な愛」を引き寄せる力が強く、時間が経つほどに相手からの信頼と愛情が深まっていきます。"
+                    },
+                    male: {
+                        emoji: "🏔️",
+                        title: "気品あふれる大人のロイヤル男神タイプ",
+                        tag: "#誠実さと頼りがいで本命の座を射止める実力派",
+                        desc: "落ち着いた大人の色気と、誠実に愛を育む芯の強さを持つ男神。軽い恋ではなく「将来を見据えた真剣な愛」を引き寄せる力が強く、時間が経つほどに相手からの信頼と愛情が深まっていきます。"
+                    }
+                },
+                jupiter: {
+                    catch: "「着実に幸せへ近づいている。誠実さは必ず愛に変わる！」",
+                    desc: "恋の拡大ポイントは『自分の価値を高く見積もること』。安売りせず、あなたを本当に大切にしてくれる誠実な相手だけを選ぶ姿勢が、結果的に最高の溺愛運を呼び込みます。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🦅",
+                        title: "仕事ができる！頼りがい抜群の野心家リーダー男子",
+                        desc: "責任感が強く、社会的な信頼も厚い「デキる男」とご縁が深いです。普段は仕事人間で不器用な一面もありますが、あなたにだけは弱音や甘えを見せてくれる特別な関係になれます。"
+                    },
+                    male: {
+                        emoji: "🦢",
+                        title: "自立した大人の魅力！礼儀正しい大和撫子女子",
+                        desc: "精神的に自立していて、礼儀やマナーがしっかりした「デキる女性」とご縁が深いです。普段はクールでしっかり者ですが、あなたにだけは弱音や甘えを見せてくれる特別な関係になれます。"
+                    }
+                }
+            },
+            {
+                sign: "水瓶座",
+                venus: {
+                    female: {
+                        emoji: "🛸",
+                        title: "唯一無二の個性派ファンタジスタ女神タイプ",
+                        tag: "#常識にとらわれないクールビューティー",
+                        desc: "「他の子とは何かが違う！」と男性の心を掴んで離さない、爽やかで個性的な魅力の持ち主。ベタベタしすぎず、相手の個性も尊重できるため、クリエイティブで賢い男性から熱烈に愛されます。"
+                    },
+                    male: {
+                        emoji: "⚡",
+                        title: "唯一無二の個性派ファンタジスタ男神タイプ",
+                        tag: "#常識にとらわれないクールな天才肌",
+                        desc: "「他の男とは何かが違う！」と女性の心を掴んで離さない、爽やかで個性的な魅力の持ち主。ベタベタしすぎず、相手の個性も尊重できるため、自立した賢い女性から熱烈に愛されます。"
+                    }
+                },
+                jupiter: {
+                    catch: "「普通じゃなくていい！自分らしい愛し方が一番うまくいく」",
+                    desc: "恋がうまくいく心の持ち方は『世間のルールに縛られないこと』。「連絡は毎日すべき」「デートはこうあるべき」という思い込みを手放すと、驚くほどラクで幸せな恋が舞い込みます。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🤖",
+                        title: "独特の世界観を持つ！天才肌のマイペース男子",
+                        desc: "ちょっと変わり者だけど、独自のこだわりや才能を持つ個性派男子に惹かれがち。最初は友達感覚からスタートし、気がつけば誰にも代えがたい特別なパートナーになっているパターンが多いです！"
+                    },
+                    male: {
+                        emoji: "🦄",
+                        title: "独特の世界観を持つ！アーティスティックな個性派女子",
+                        desc: "ちょっと不思議ちゃんだけど、独自のセンスや才能を持つ個性派女子に惹かれがち。最初は友達感覚からスタートし、気がつけば誰にも代えがたい特別なパートナーになっているパターンが多いです！"
+                    }
+                }
+            },
+            {
+                sign: "魚座",
+                venus: {
+                    female: {
+                        emoji: "🧜‍♀️",
+                        title: "夢見るロマンチック人魚姫タイプ",
+                        tag: "#守りたくなる儚さと無償の愛の持ち主",
+                        desc: "ふんわりとした優しい空気感と、相手の心に寄り添う共感力は12星座ナンバーワン！少し天然で放っておけない可愛らしさがあり、男性の「俺が守ってあげなきゃ！」というヒーロー願望を120%引き出します。"
+                    },
+                    male: {
+                        emoji: "🔱",
+                        title: "夢見るロマンチック海神ポセイドンタイプ",
+                        tag: "#圧倒的な優しさと無償の愛の持ち主",
+                        desc: "ふんわりとした優しい空気感と、相手の心に寄り添う共感力は12星座ナンバーワン！少し天然で放っておけない可愛らしさと、すべてを受け入れる包容力で女性の心を溶かします。"
+                    }
+                },
+                jupiter: {
+                    catch: "「宇宙に愛されている。流れに身を任せれば大丈夫♪」",
+                    desc: "恋がうまくいく心の持ち方は『直感とインスピレーションを信じること』。理屈で考えるより「なんとなくいい感じ！」という心のときめきに従うことで、奇跡のような展開が訪れます。"
+                },
+                mars: {
+                    female: {
+                        emoji: "🐬",
+                        title: "優しすぎて心配になる！感受性豊かなアーティスト男子",
+                        desc: "繊細で優しい心を持ち、ロマンチックな言葉や雰囲気を大切にする男子と縁が深いです。少し優柔不断なところもありますが、あなたの癒やしのパワーで包み込むと深い愛を返してくれます。"
+                    },
+                    male: {
+                        emoji: "🧚‍♀️",
+                        title: "守ってあげたくなる！感受性豊かな天然癒やし女子",
+                        desc: "繊細で優しい心を持ち、ロマンチックな言葉や雰囲気を大切にする女子と縁が深いです。少し天然なところもありますが、あなたが優しくリードしてあげると深い愛を返してくれます。"
+                    }
+                }
+            }
+        ];
+
+        // ==========================================
+        // 2. Astronomy Engine による黄道十二宮計算
+        // ==========================================
+        /**
+         * 指定された天体（'Venus', 'Jupiter', 'Mars'）と日時から
+         * 黄道十二宮（0:牡羊座 〜 11:魚座）のインデックスを計算して返す
+         */
+        function getZodiacIndex(bodyName, dateObj) {
+            // 地球から見た天体の地心位置ベクトルを取得（収差補正あり）
+            const geoVector = Astronomy.GeoVector(bodyName, dateObj, true);
+            // 赤道座標から黄道座標（黄経・黄緯）へ変換
+            const ecliptic = Astronomy.Ecliptic(geoVector);
+            // 黄経（0〜360度）を30度ずつに区切って星座インデックス（0〜11）を算出
+            let lon = ecliptic.elon % 360;
+            if (lon < 0) lon += 360;
+            return Math.floor(lon / 30);
+        }
+
+        // ==========================================
+        // 3. UIイベントと診断処理
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('fortuneForm');
+            const inputSection = document.getElementById('inputSection');
+            const loadingSection = document.getElementById('loadingSection');
+            const resultSection = document.getElementById('resultSection');
+            const errorModal = document.getElementById('errorModal');
+            const errorMessage = document.getElementById('errorMessage');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const copyResultBtn = document.getElementById('copyResultBtn');
+            const copyToast = document.getElementById('copyToast');
+            const retryBtn = document.getElementById('retryBtn');
+            const genderRadios = document.querySelectorAll('input[name="gender"]');
+
+            let currentShareText = "";
+            let selectedGender = "female"; // 'female' or 'male'
+
+            // 性別切り替え時のテーマカラー・文言のリアルタイム変更
+            function updateThemeByGender(gender) {
+                selectedGender = gender;
+                const isMale = (gender === 'male');
+                
+                const appBody = document.getElementById('appBody');
+                const appHeader = document.getElementById('appHeader');
+                const appMainTitle = document.getElementById('appMainTitle');
+                const introBox = document.getElementById('introBox');
+                const introTitle = document.getElementById('introTitle');
+                const introRoleText = document.getElementById('introRoleText');
+                const submitBtn = document.getElementById('submitBtn');
+                const submitBtnText = document.getElementById('submitBtnText');
+                const loadingText = document.getElementById('loadingText');
+                const shareCard = document.getElementById('shareCard');
+                const screenshotBadge = document.getElementById('screenshotBadge');
+                const venusSignWrapper = document.getElementById('venusSignWrapper');
+                const venusSubLabel = document.getElementById('venusSubLabel');
+                const venusTitle = document.getElementById('venusTitle');
+                const venusTag = document.getElementById('venusTag');
+                const copyResultBtn = document.getElementById('copyResultBtn');
+
+                if (isMale) {
+                    // 男神テーマ（ロイヤルブルー＆ゴールド調）
+                    appBody.className = "bg-gradient-to-b from-slate-100 via-indigo-50 to-amber-50 text-gray-800 font-sans min-h-screen flex flex-col items-center justify-start py-6 px-4 transition-colors duration-500";
+                    appHeader.className = "bg-gradient-to-r from-indigo-600 via-blue-600 to-slate-800 p-6 text-center text-white relative overflow-hidden transition-all duration-500";
+                    appMainTitle.innerHTML = 'あなたの「愛され男神タイプ」<br>＆ 恋の拡大ポイント診断';
+                    introBox.className = "bg-indigo-50/70 rounded-2xl p-4 mb-6 border border-indigo-100 text-sm text-gray-700 leading-relaxed transition-colors duration-500";
+                    introTitle.className = "font-bold text-indigo-700 mb-1";
+                    introRoleText.textContent = "男神";
+                    submitBtn.className = "w-full py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-lg shadow-lg shadow-indigo-200 transform active:scale-95 transition flex items-center justify-center gap-2";
+                    submitBtnText.textContent = "男神タイプを診断する";
+                    loadingText.className = "font-serif text-lg font-bold text-indigo-700 animate-pulse";
+                    
+                    shareCard.className = "relative bg-gradient-to-br from-indigo-50 via-white to-blue-50 rounded-3xl p-6 border-2 border-indigo-200 shadow-md text-center overflow-hidden";
+                    screenshotBadge.className = "absolute top-2 right-3 text-[10px] font-bold text-indigo-500 bg-indigo-100/80 px-2.5 py-0.5 rounded-full";
+                    venusSignWrapper.className = "text-xs font-bold text-blue-700 mt-2";
+                    venusSubLabel.textContent = "あなたの愛され男神タイプは…";
+                    venusTitle.className = "font-serif text-2xl font-bold text-indigo-700 leading-tight mb-2";
+                    venusTag.className = "inline-block bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full mb-4";
+                    copyResultBtn.className = "flex-1 py-2.5 px-3 rounded-xl bg-indigo-100 hover:bg-indigo-200 text-indigo-800 font-bold text-xs transition flex items-center justify-center gap-1";
+                } else {
+                    // 女神テーマ（ローズピンク＆パープル調）
+                    appBody.className = "bg-gradient-to-b from-pink-50 via-purple-50 to-amber-50 text-gray-800 font-sans min-h-screen flex flex-col items-center justify-start py-6 px-4 transition-colors duration-500";
+                    appHeader.className = "bg-gradient-to-r from-pink-400 via-rose-400 to-purple-400 p-6 text-center text-white relative overflow-hidden transition-all duration-500";
+                    appMainTitle.innerHTML = 'あなたの「愛され女神タイプ」<br>＆ 恋の拡大ポイント診断';
+                    introBox.className = "bg-pink-50/70 rounded-2xl p-4 mb-6 border border-pink-100 text-sm text-gray-700 leading-relaxed transition-colors duration-500";
+                    introTitle.className = "font-bold text-rose-600 mb-1";
+                    introRoleText.textContent = "女神";
+                    submitBtn.className = "w-full py-4 rounded-2xl bg-gradient-to-r from-rose-500 to-purple-500 hover:from-rose-600 hover:to-purple-600 text-white font-bold text-lg shadow-lg shadow-rose-200 transform active:scale-95 transition flex items-center justify-center gap-2";
+                    submitBtnText.textContent = "女神タイプを診断する";
+                    loadingText.className = "font-serif text-lg font-bold text-rose-600 animate-pulse";
+
+                    shareCard.className = "relative bg-gradient-to-br from-rose-50 via-white to-purple-50 rounded-3xl p-6 border-2 border-rose-200 shadow-md text-center overflow-hidden";
+                    screenshotBadge.className = "absolute top-2 right-3 text-[10px] font-bold text-rose-400 bg-rose-100/80 px-2.5 py-0.5 rounded-full";
+                    venusSignWrapper.className = "text-xs font-bold text-purple-600 mt-2";
+                    venusSubLabel.textContent = "あなたの愛され女神タイプは…";
+                    venusTitle.className = "font-serif text-2xl font-bold text-rose-600 leading-tight mb-2";
+                    venusTag.className = "inline-block bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4";
+                    copyResultBtn.className = "flex-1 py-2.5 px-3 rounded-xl bg-pink-100 hover:bg-pink-200 text-rose-700 font-bold text-xs transition flex items-center justify-center gap-1";
+                }
+            }
+
+            genderRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    updateThemeByGender(e.target.value);
+                });
+            });
+
+            // モーダル閉じる
+            closeModalBtn.addEventListener('click', () => {
+                errorModal.classList.add('hidden');
+            });
+
+            function showError(msg) {
+                errorMessage.textContent = msg;
+                errorModal.classList.remove('hidden');
+            }
+
+            // フォーム送信（診断実行）
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const dateVal = document.getElementById('birthDate').value;
+                const timeVal = document.getElementById('birthTime').value || "12:00";
+
+                if (!dateVal) {
+                    showError("生年月日を入力してください。");
+                    return;
+                }
+
+                // 日本時間 (JST: +09:00) としてDateオブジェクトを生成
+                const birthDateTime = new Date(`${dateVal}T${timeVal}:00+09:00`);
+                if (isNaN(birthDateTime.getTime())) {
+                    showError("正しい日付を入力してください。");
+                    return;
+                }
+
+                // ローディング演出へ切り替え
+                inputSection.classList.add('hidden');
+                loadingSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                setTimeout(() => {
+                    try {
+                        // Astronomy Engineで各天体の星座インデックスを計算
+                        const venusIdx = getZodiacIndex('Venus', birthDateTime);
+                        const jupiterIdx = getZodiacIndex('Jupiter', birthDateTime);
+                        const marsIdx = getZodiacIndex('Mars', birthDateTime);
+
+                        const venusData = ZODIAC_DATA[venusIdx];
+                        const jupiterData = ZODIAC_DATA[jupiterIdx];
+                        const marsData = ZODIAC_DATA[marsIdx];
+
+                        const venusRoleData = venusData.venus[selectedGender];
+                        const marsRoleData = marsData.mars[selectedGender];
+                        const roleLabel = selectedGender === 'male' ? '男神' : '女神';
+
+                        // 画面に結果を反映
+                        // 1. 金星（愛され女神・男神タイプ）
+                        document.getElementById('venusSignName').textContent = venusData.sign;
+                        document.getElementById('venusEmoji').textContent = venusRoleData.emoji;
+                        document.getElementById('venusTitle').textContent = venusRoleData.title;
+                        document.getElementById('venusTag').textContent = venusRoleData.tag;
+                        document.getElementById('venusDesc').textContent = venusRoleData.desc;
+
+                        // 2. 木星（恋の拡大ポイント）
+                        document.getElementById('jupiterSignName').textContent = jupiterData.sign;
+                        document.getElementById('jupiterCatch').textContent = jupiterData.jupiter.catch;
+                        document.getElementById('jupiterDesc').textContent = jupiterData.jupiter.desc;
+
+                        // 3. 火星（相手の面白タイプ）
+                        document.getElementById('marsSignName').textContent = marsData.sign;
+                        document.getElementById('marsEmoji').textContent = marsRoleData.emoji;
+                        document.getElementById('marsTitle').textContent = marsRoleData.title;
+                        document.getElementById('marsDesc').textContent = marsRoleData.desc;
+
+                        // シェア用テキスト生成
+                        currentShareText = `✨【愛され${roleLabel}タイプ診断】✨\n私の${roleLabel}タイプは…\n👑「${venusRoleData.title}」（金星：${venusData.sign}）でした！\n${venusRoleData.tag}\n\n💘引き寄せるお相手は「${marsRoleData.title}」らしい…！\nあなたは何タイプ？一緒に診断してみよ〜！`;
+
+                        // 結果表示へ切り替え
+                        loadingSection.classList.add('hidden');
+                        resultSection.classList.remove('hidden');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    } catch (err) {
+                        console.error(err);
+                        loadingSection.classList.add('hidden');
+                        inputSection.classList.remove('hidden');
+                        showError("計算中にエラーが発生しました。もう一度お試しください。");
+                    }
+                }, 900); // ワクワク感を出すための演出ウェイト
+            });
+
+            // 結果テキストのコピー機能（iFrame環境でも確実に動くexecCommand使用）
+            copyResultBtn.addEventListener('click', () => {
+                const tempTextarea = document.createElement('textarea');
+                tempTextarea.value = currentShareText;
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                try {
+                    document.execCommand('copy');
+                    copyToast.classList.remove('hidden');
+                    setTimeout(() => {
+                        copyToast.classList.add('hidden');
+                    }, 3000);
+                } catch (err) {
+                    showError("コピーに失敗しました。画面をスクショしてシェアしてください！");
+                }
+                document.body.removeChild(tempTextarea);
+            });
+
+            // もう一度診断する
+            retryBtn.addEventListener('click', () => {
+                resultSection.classList.add('hidden');
+                inputSection.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
